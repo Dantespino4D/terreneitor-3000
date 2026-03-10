@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+# Código fuente y configuración de PlatformIO
+*.cpp text
+*.h text
+*.c text
+*.hpp text
+platformio.ini text
+
+# Scripts de terminal (Crítico para que funcionen en sus respectivos sistemas)
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Archivos binarios (Evita que Git corrompa imágenes u otros binarios buscando saltos de línea)
+*.png binary
+*.jpg binary
+*.pdf binary
