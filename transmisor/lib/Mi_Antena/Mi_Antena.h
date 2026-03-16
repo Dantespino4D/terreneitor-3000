@@ -1,23 +1,25 @@
-#ifndef MI_ESPNOW_H
-#define MI_ESPNOW_H
+#ifndef MI_ANTENA_H
+#define MI_ANTENA_H
 
 #include "Datos.h"
 #include <stdint.h>
 #include <esp_now.h> // Libreria para utilizar esp-now
 
-class  Mi_Espnow{
+class  MiAntena{
     private:
         uint8_t macReceptor[6];
         esp_now_peer_info_t expedienteReceptor;
     
     
     public:
-        Mi_Espnow();
+        MiAntena();
 
         void begin();
+        void encenderWiFi(bool activareEspnow);
         void agregarMacAddress(const uint8_t* nuevaMac);
         void expediente();
         void empaquetar(Datos* paquete);
+        void apagarWiFi();
 };
 
 #endif

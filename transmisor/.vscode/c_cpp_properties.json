@@ -9,7 +9,6 @@
             "name": "PlatformIO",
             "includePath": [
                 "C:/Users/Aizen/Documents/PlatformIO/Projects/Terreneitor/terreneitor-3000/transmisor/src",
-                "C:/Users/Aizen/Documents/PlatformIO/Projects/Terreneitor/terreneitor-3000/transmisor/lib/MI_ESPNOW",
                 "C:/Users/Aizen/Documents/PlatformIO/Projects/Terreneitor/terreneitor-3000/transmisor/lib/Datos",
                 "C:/Users/Aizen/.platformio/packages/framework-espidf/components/xtensa/esp32/include",
                 "C:/Users/Aizen/.platformio/packages/framework-espidf/components/xtensa/include",
@@ -179,13 +178,13 @@
                 "C:/Users/Aizen/.platformio/packages/framework-espidf/components/rt/include",
                 "C:/Users/Aizen/.platformio/packages/framework-espidf/components/spiffs/include",
                 "C:/Users/Aizen/.platformio/packages/framework-espidf/components/wifi_provisioning/include",
+                "C:/Users/Aizen/Documents/PlatformIO/Projects/Terreneitor/terreneitor-3000/transmisor/lib/Mi_Antena",
                 ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "C:/Users/Aizen/Documents/PlatformIO/Projects/Terreneitor/terreneitor-3000/transmisor/src",
-                    "C:/Users/Aizen/Documents/PlatformIO/Projects/Terreneitor/terreneitor-3000/transmisor/lib/MI_ESPNOW",
                     "C:/Users/Aizen/Documents/PlatformIO/Projects/Terreneitor/terreneitor-3000/transmisor/lib/Datos",
                     "C:/Users/Aizen/.platformio/packages/framework-espidf/components/xtensa/esp32/include",
                     "C:/Users/Aizen/.platformio/packages/framework-espidf/components/xtensa/include",
@@ -355,6 +354,7 @@
                     "C:/Users/Aizen/.platformio/packages/framework-espidf/components/rt/include",
                     "C:/Users/Aizen/.platformio/packages/framework-espidf/components/spiffs/include",
                     "C:/Users/Aizen/.platformio/packages/framework-espidf/components/wifi_provisioning/include",
+                    "C:/Users/Aizen/Documents/PlatformIO/Projects/Terreneitor/terreneitor-3000/transmisor/lib/Mi_Antena",
                     ""
                 ]
             },

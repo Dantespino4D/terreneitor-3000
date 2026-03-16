@@ -7,14 +7,14 @@
 #include "esp_event.h"
 #include "Controles/Controles.h"
 #include "Datos.h"
-#include "MI_ESPNOW.h"
+#include "mi_antena.h"
 
 //objeto que recopila las lecturas de los controles
-Controles controles(ADC1_CHANNEL_0, ADC1_CHANNEL_3);
-Mi_Espnow paqueteEnviar;
+Controles controles(ADC1_CHANNEL_6, ADC1_CHANNEL_7);
+MiAntena paqueteEnviar;
 
 //estructura de datos
-Datos estructuraControl = {2048, 2048, false, false/*,false,false*/};
+Datos estructuraControl = {2048, 2048, 0, 0, 255, 255, 255};
 uint8_t mac[6] = {0x1C, 0xDB, 0xD4, 0x47, 0X01, 0xD4};
 
 //prototipo de la funcion de la tarea
@@ -25,32 +25,71 @@ void enviar(void* pvParameters);//y empaquetar
 
 //APP MAIN
 
+extern "C" void app_main() { //se inicializan pines y otras cosas de los controles 
+	controles.begin(); ; 
+	paqueteEnviar.begin(); 
+	paqueteEnviar.agregarMacAddress(mac);
+	paqueteEnviar.expediente(); 
 
-extern "C" void app_main() {
-	//se inicializan pines y otras cosas de los controles
-	controles.begin();
-
-    paqueteEnviar.begin();
-    paqueteEnviar.agregarMacAddress(mac);
-    paqueteEnviar.expediente();
-
-	//se crea la tarea de enviar
-	xTaskCreatePinnedToCore(enviar, "enviar", 2048, NULL, 1, NULL, 1);
+	//se crea la tarea de enviar 
+	xTaskCreatePinnedToCore(enviar, "enviar", 2048, NULL, 1, NULL, 1); 
 }
-
 
 //ENVIAR
 
 
 void enviar(void* pvParameters) {
+	Datos valoresAnteriores = {1, 1, 1, 1, 1, 1, 1};
+
+	uint32_t ultimoMovimiento = 0;
+	const uint32_t TIEMPO_ESPERA_MS = 10000; // 10 segundos de inactividad para apagar
+    bool antenaPrendida = true; // Empieza prendida porque la encendimos en app_main
+
+	bool cambioX;
+	bool cambioY;
+	bool cambioBotones;
+
 	while (true) {
 		//logica para enviar datos al terrneitorior
 
 		//se llena el struct
-        vTaskDelay(50 / portTICK_PERIOD_MS);
 		controles.empaquetar(&estructuraControl);
-		vTaskDelay(pdMS_TO_TICKS(10));
-        printf("X: %d, Y: %d, Encendido: %d, Vel: %d, R: %d, G: %d, B: %d\n", estructuraControl.x, estructuraControl.y, estructuraControl.encender, estructuraControl.vel, estructuraControl.rojo, estructuraControl.verde, estructuraControl.azul);
-        paqueteEnviar.empaquetar(&estructuraControl);
-	}
+
+		cambioX = (abs(estructuraControl.x - valoresAnteriores.x) > 50);
+        cambioY = (abs(estructuraControl.y - valoresAnteriores.y) > 50);
+		cambioBotones = (estructuraControl.encender != valoresAnteriores.encender) || (estructuraControl.vel != valoresAnteriores.vel);
+
+		if (cambioX || cambioY || cambioBotones) 
+        {   
+            // Actualizamos el reloj porque nos acabamos de mover
+            ultimoMovimiento = xTaskGetTickCount() * portTICK_PERIOD_MS;
+            
+            // Si la antena estaba dormida, la despertamos
+            if (!antenaPrendida) {
+                paqueteEnviar.encenderWiFi(true); // true = usar ESP-NOW
+                
+                // Como bien dijiste, organizamos esto por separado:
+                paqueteEnviar.agregarMacAddress(mac);
+                paqueteEnviar.expediente();
+                
+                antenaPrendida = true;
+            }
+
+            // Enviamos y actualizamos estado
+            paqueteEnviar.empaquetar(&estructuraControl);
+            valoresAnteriores = estructuraControl;
+        }
+
+        // 2. ¿LLEVAMOS MUCHO TIEMPO SIN MOVERNOS?
+        uint32_t tiempoActual = xTaskGetTickCount() * portTICK_PERIOD_MS;
+        
+        if (antenaPrendida && ((tiempoActual - ultimoMovimiento) > TIEMPO_ESPERA_MS)) 
+		{
+            // Pasaron los 10 segundos sin actividad. ¡A dormir!
+            paqueteEnviar.apagarWiFi(); // true = apagar también ESP-NOW
+            antenaPrendida = false;
+        }
+        vTaskDelay(20 / portTICK_PERIOD_MS);
+    }
 }
+

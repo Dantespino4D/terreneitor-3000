@@ -6,8 +6,8 @@
 Controles::Controles(adc1_channel_t chX, adc1_channel_t chY) :
     x(2048),
 	y(2048),
-	pin_encender(GPIO_NUM_1),
-	pin_vel(GPIO_NUM_2),
+	pin_encender(GPIO_NUM_13), //PIN PROHIBIDOS: TX Y RX, D5, D4, D12, D15 (GPIO_NUM_3 Y GPIO_NUM_1 equivalen a RX0 y TX0, estos ahogan el monitor serial)
+	pin_vel(GPIO_NUM_14),
  	//pin_continuar(3),
 	//pin_modo(0),
 	encender(0),
