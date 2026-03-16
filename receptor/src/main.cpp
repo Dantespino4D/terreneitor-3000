@@ -19,9 +19,9 @@ Mi_Espnow now;
 Datos mensajeDatos;
 bool nueva_configuracion_colores = false;
 
-
-void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_entrantes, int longitud);
 //metodo mac address
+void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_entrantes, int longitud);
+
 //prototipos de las funciones de las tareas
 void desempaquetar(void* pvParameters);
 void movimiento(void* pvParameters);
