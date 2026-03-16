@@ -11,10 +11,12 @@
 
 #include "LEDRGB.h"
 #include "Datos.h"
-#include "MI_ESPNOW.h"
+#include "mi_antena.h"
 
 LedRGB luces;
-Mi_Espnow now;
+MiAntena now;
+
+uint8_t mac[6];
 
 Datos mensajeDatos;
 bool nueva_configuracion_colores = false;
@@ -23,7 +25,6 @@ bool nueva_configuracion_colores = false;
 void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_entrantes, int longitud);
 
 //prototipos de las funciones de las tareas
-void desempaquetar(void* pvParameters);
 void movimiento(void* pvParameters);
 
 
@@ -34,26 +35,18 @@ void movimiento(void* pvParameters);
 
 extern "C" void app_main(void){
     luces.begin();
-    uint8_t mac[6];
-
+    
     now.begin();
+    now.encenderWiFi(true);
+
     esp_read_mac(mac, ESP_MAC_WIFI_STA);
+    printf("Mac Address: %02X, %02X, %02X, %02X, %02X, %02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+    esp_now_register_recv_cb(recibirDatos_espnow);
+
 	//se crean las tareas
-	xTaskCreatePinnedToCore(desempaquetar, "recibir", 2048, NULL, 1, NULL, 0);
 	xTaskCreatePinnedToCore(movimiento, "mover", 2048, NULL, 1, NULL, 1);
 }
-
-
-//RECIBIR
-
-
-void desempaquetar(void* pvParameters){
-	while(1){
-		//logica para recibir datos del control
-    	esp_now_register_recv_cb(recibirDatos_espnow);
-	}
-}
-
 
 //MOVER
 
@@ -88,8 +81,8 @@ void movimiento(void* pvParameters){
             {
                 luces.encenderLed(0, 0, 0);
             }
-            vTaskDelay(50 / portTICK_PERIOD_MS);
         }
+        vTaskDelay(20 / portTICK_PERIOD_MS);
 	}
 }
 
@@ -105,6 +98,9 @@ void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_e
         nueva_configuracion_colores = true;
     }
     else
+    {
         printf("Errror al recibir paquete de datos\n");
-
+        nueva_configuracion_colores = false;
+    }
 }
+
