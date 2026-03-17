@@ -26,7 +26,7 @@ void enviar(void* pvParameters);//y empaquetar
 //APP MAIN
 
 extern "C" void app_main() { //se inicializan pines y otras cosas de los controles 
-	controles.begin(); ; 
+	controles.begin();
 	paqueteEnviar.begin(); 
 	paqueteEnviar.agregarMacAddress(mac);
 	paqueteEnviar.expediente(); 
@@ -76,7 +76,7 @@ void enviar(void* pvParameters) {
             }
 
             // Enviamos y actualizamos estado
-            printf("Datos X: %d, Y: %d, encender: %d, vel: %d, R: %d, G: %d, B: %d\n", estructuraControl.x, estructuraControl.y, estructuraControl.encender, estructuraControl.vel, estructuraControl.rojo, estructuraControl.verde, estructuraControl.azul);   
+            printf("Datos X: %d, Y: %d, encender: %d, vel: %d, R: %d, G: %d, B: %d\n", estructuraControl.x, estructuraControl.y, estructuraControl.encender, estructuraControl.vel, estructuraControl.rojo, estructuraControl.verde, estructuraControl.azul);
             paqueteEnviar.empaquetar(&estructuraControl);
             valoresAnteriores = estructuraControl;
         }

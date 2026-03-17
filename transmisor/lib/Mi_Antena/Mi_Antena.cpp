@@ -63,7 +63,7 @@ void MiAntena::expediente(){
     
 
 void MiAntena::empaquetar(Datos* paqueteListo){
-     esp_err_t resultado = esp_now_send(macReceptor, (uint8_t *) &paqueteListo, sizeof(paqueteListo));
+     esp_err_t resultado = esp_now_send(macReceptor, (uint8_t *) paqueteListo, sizeof(Datos));
 
         // Comprobamos que se envio el paquete
         //ESP_OK == 0, si lo que guardo paquete es 0, entonces salio bien
