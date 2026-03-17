@@ -76,6 +76,7 @@ void enviar(void* pvParameters) {
             }
 
             // Enviamos y actualizamos estado
+            printf("Datos X: %d, Y: %d, encender: %d, vel: %d, R: %d, G: %d, B: %d\n", estructuraControl.x, estructuraControl.y, estructuraControl.encender, estructuraControl.vel, estructuraControl.rojo, estructuraControl.verde, estructuraControl.azul);   
             paqueteEnviar.empaquetar(&estructuraControl);
             valoresAnteriores = estructuraControl;
         }

@@ -27,11 +27,7 @@ void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_e
 //prototipos de las funciones de las tareas
 void movimiento(void* pvParameters);
 
-
-
-
 //APP MAIN
-
 
 extern "C" void app_main(void){
     luces.begin();

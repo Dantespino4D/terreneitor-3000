@@ -46,7 +46,7 @@ void MiAntena::encenderWiFi(bool apagarEspnow){
 void MiAntena::agregarMacAddress(const uint8_t* nuevaMac){
     memcpy(macReceptor, nuevaMac, 6);
     esp_read_mac(macReceptor, ESP_MAC_WIFI_STA);
-    printf("Direccion Mac Address: %02X, %02x, %02X, %02X, %02X, %02X", macReceptor[0], macReceptor[1], macReceptor[2], macReceptor[3], macReceptor[4], macReceptor[5]);
+    printf("Direccion Mac Address: %02X, %02x, %02X, %02X, %02X, %02X\n", macReceptor[0], macReceptor[1], macReceptor[2], macReceptor[3], macReceptor[4], macReceptor[5]);
 }
 
 void MiAntena::expediente(){ 
