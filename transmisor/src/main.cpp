@@ -25,14 +25,14 @@ void enviar(void* pvParameters);//y empaquetar
 
 //APP MAIN
 
-extern "C" void app_main() { //se inicializan pines y otras cosas de los controles 
+extern "C" void app_main() { //se inicializan pines y otras cosas de los controles
 	controles.begin();
-	paqueteEnviar.begin(); 
+	paqueteEnviar.begin();
 	paqueteEnviar.agregarMacAddress(mac);
-	paqueteEnviar.expediente(); 
+	paqueteEnviar.expediente();
 
-	//se crea la tarea de enviar 
-	xTaskCreatePinnedToCore(enviar, "enviar", 2048, NULL, 1, NULL, 1); 
+	//se crea la tarea de enviar
+	xTaskCreatePinnedToCore(enviar, "enviar", 2048, NULL, 1, NULL, 1);
 }
 
 //ENVIAR
@@ -55,23 +55,23 @@ void enviar(void* pvParameters) {
 		//se llena el struct
 		controles.empaquetar(&estructuraControl);
 
-		cambioX = (abs(estructuraControl.x - valoresAnteriores.x) > 50);
-        cambioY = (abs(estructuraControl.y - valoresAnteriores.y) > 50);
+		cambioX = (abs(estructuraControl.x - 2048) > 100);
+        cambioY = (abs(estructuraControl.y - 2048) > 100);
 		cambioBotones = (estructuraControl.encender != valoresAnteriores.encender) || (estructuraControl.vel != valoresAnteriores.vel);
 
-		if (cambioX || cambioY || cambioBotones) 
-        {   
+		if (cambioX || cambioY || cambioBotones)
+        {
             // Actualizamos el reloj porque nos acabamos de mover
             ultimoMovimiento = xTaskGetTickCount() * portTICK_PERIOD_MS;
-            
+
             // Si la antena estaba dormida, la despertamos
             if (!antenaPrendida) {
                 paqueteEnviar.encenderWiFi(true); // true = usar ESP-NOW
-                
+
                 // Como bien dijiste, organizamos esto por separado:
                 paqueteEnviar.agregarMacAddress(mac);
                 paqueteEnviar.expediente();
-                
+
                 antenaPrendida = true;
             }
 
@@ -83,8 +83,8 @@ void enviar(void* pvParameters) {
 
         // 2. ¿LLEVAMOS MUCHO TIEMPO SIN MOVERNOS?
         uint32_t tiempoActual = xTaskGetTickCount() * portTICK_PERIOD_MS;
-        
-        if (antenaPrendida && ((tiempoActual - ultimoMovimiento) > TIEMPO_ESPERA_MS)) 
+
+        if (antenaPrendida && ((tiempoActual - ultimoMovimiento) > TIEMPO_ESPERA_MS))
 		{
             // Pasaron los 10 segundos sin actividad. ¡A dormir!
             paqueteEnviar.apagarWiFi(); // true = apagar también ESP-NOW

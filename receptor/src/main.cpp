@@ -11,7 +11,7 @@
 
 #include "LEDRGB.h"
 #include "Datos.h"
-#include "mi_antena.h"
+#include "Mi_Antena.h"
 
 LedRGB luces;
 MiAntena now;
@@ -31,7 +31,7 @@ void movimiento(void* pvParameters);
 
 extern "C" void app_main(void){
     luces.begin();
-    
+
     now.begin();
     now.encenderWiFi(true);
 
