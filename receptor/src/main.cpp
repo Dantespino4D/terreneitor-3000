@@ -26,7 +26,6 @@ LedRGB luces;
 MiAntena now;
 Motores motor(PIN_STBY, PIN_AIN1, PIN_AIN2, PIN_PWMA, PIN_BIN1, PIN_BIN2, PIN_PWMB);
 
-
 uint8_t mac[6];
 
 Datos mensajeDatos;
@@ -57,7 +56,7 @@ extern "C" void app_main(void){
     esp_now_register_recv_cb(recibirDatos_espnow);
 
 	//se crean las tareas
-	xTaskCreatePinnedToCore(movimiento, "mover", 2048, NULL, 1, NULL, 1);
+	xTaskCreatePinnedToCore(movimiento, "mover", 4096, NULL, 1, NULL, 1);
 }
 
 //MOVER
@@ -86,13 +85,15 @@ void movimiento(void* pvParameters){
                     int vel = mapear(mensajeDatos.y, 1900, 5000, 0, 150);
                     if (vel > 150) vel = 150; 
                     motor.avanzar(vel);
+                    printf("Velocidad: %d", vel);
                     luces.encenderLed(0, 0, mensajeDatos.azul);
                 } 
                 else if (mensajeDatos.y < 1700) {
                     int vel = mapear(mensajeDatos.y, 1700, 0, 0, 150);
                     if (vel > 150) vel = 150;
                     motor.retroceder(vel);
-                    luces.encenderLed(0, 0, mensajeDatos.azul);
+                    printf("Velocidad: %d", vel);
+                    luces.encenderLed(0, mensajeDatos.verde, 0);
                 } 
                 // 2. Prioridad 2: Si no estamos acelerando, revisamos si queremos Girar (Eje X)
                 else if (mensajeDatos.x > 1900) {
@@ -100,20 +101,23 @@ void movimiento(void* pvParameters){
                     int vel = mapear(mensajeDatos.x, 1900, 5000, 0, 150);
                     if (vel > 150) vel = 150;
                     motor.girarDerecha(vel);
-                    luces.encenderLed(0, 0, mensajeDatos.azul);
+                    printf("Velocidad: %d", vel);
+                    luces.encenderLed(mensajeDatos.verde, 0, 0);
                 }
                 else if (mensajeDatos.x < 1700) {
                     // Girar a la IZQUIERDA
                     int vel = mapear(mensajeDatos.x, 1700, 0, 0, 150);
                     if (vel > 150) vel = 150;
                     motor.girarIzquierda(vel);
-                    luces.encenderLed(0, 0, mensajeDatos.azul);
+                    printf("Velocidad: %d", vel);
+                    luces.encenderLed(mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul);
                 }
                 // 3. Prioridad 3: Soltamos por completo el control
                 else {
                     motor.puntoMuerto();
                 }
             }
+           //motor.universal(mensajeDatos.x, mensajeDatos.y);
         }
         vTaskDelay(20 / portTICK_PERIOD_MS);
 	}
