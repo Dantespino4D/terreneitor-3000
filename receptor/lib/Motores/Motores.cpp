@@ -38,6 +38,8 @@ void Motores::begin(){
     ledc_timer.freq_hz          = 5000;                // 5 kHz (Frecuencia excelente para motores DC)
     ledc_timer.clk_cfg          = LEDC_AUTO_CLK;       // Reloj automático
 
+    ledc_timer_config(&ledc_timer);
+
     // Configuramos el Canal A (Velocidad Llanta Izquierda)
     ledc_channel_config_t ledc_channel_a = {};
     ledc_channel_a.speed_mode     = LEDC_LOW_SPEED_MODE;
@@ -172,6 +174,9 @@ void Motores::universal(int16_t x, int16_t y){
 	gpio_set_level(pin_ain2, direccion2a);
 	gpio_set_level(pin_bin1, direccion1b);
 	gpio_set_level(pin_bin2, direccion2b);
+
+    // IMPRIMIR LO QUE VA AL PWM PARA VERLO EN PANTALLA
+    printf("Intentando enviar PWM -> Motor Izq: %d\n | Motor Der: %d\n", abs(velocidad1), abs(velocidad2));
 
 	ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, abs(velocidad1));
 	ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
