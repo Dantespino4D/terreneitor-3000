@@ -1,6 +1,7 @@
 #ifndef DATOS_H
 #define DATOS_H
 
+#include <cstdint>
 #include <stdint.h>
 
 	struct Datos {
@@ -11,7 +12,9 @@
 		uint8_t rojo;
   	 	uint8_t verde;
    		uint8_t azul;
-		//bool continuar;
-		//bool modo;
-	}__attribute__((packed)); 
+		uint8_t continuar;
+		uint8_t modo;
+		uint8_t boton1;
+		uint8_t boton2;
+	}__attribute__((packed));
 #endif

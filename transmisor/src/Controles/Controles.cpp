@@ -30,7 +30,7 @@ void Controles::begin() {
 
 	//inicializacion de los pines de los botones
 	gpio_config_t conf;
-	conf.pin_bit_mask = (1ULL << pin_encender) | (1ULL << pin_vel) (1ULL << pin_continuar) | (1ULL << pin_modo) | (1ULL << pin_boton1) | (1ULL << pin_boton2);
+	conf.pin_bit_mask = (1ULL << pin_encender) | (1ULL << pin_vel) | (1ULL << pin_continuar) | (1ULL << pin_modo) | (1ULL << pin_boton1) | (1ULL << pin_boton2);
 	conf.mode = GPIO_MODE_INPUT;
 	conf.pull_up_en = GPIO_PULLUP_DISABLE;
 	conf.pull_down_en = GPIO_PULLDOWN_ENABLE;
@@ -47,7 +47,7 @@ void Controles::pos() {
     tempX = adc1_get_raw(channelX);
     tempY = adc1_get_raw(channelY);
 	//se calibra para evitar errores en x
-	if(abs(tempX - 2048) < 100){
+	if(abs(tempX - 2048) < 250){
 		//valor del centro
 		x = 2048;
 	} else {
@@ -55,7 +55,7 @@ void Controles::pos() {
 		x = tempX;
 	}
 	//se calibra para evitar errores en y
-	if(abs(tempY - 2048) < 100){
+	if(abs(tempY - 2048) < 250){
 		//valor del centro
 		y = 2048;
 	} else {

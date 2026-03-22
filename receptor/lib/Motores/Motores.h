@@ -35,7 +35,7 @@ class Motores{
         void girarDerecha(uint16_t velocidad);
         void frenar(); // Detiene el coche de golpe
         void puntoMuerto(); // Deja los motores al aire para que se vayan frenando solos
-		void universal(int16_t y, int16_t y);
+		void universal(int16_t x, int16_t y);
 		void velocidad(int16_t x, int16_t y);
 };
 

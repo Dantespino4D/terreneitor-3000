@@ -10,7 +10,7 @@
 #include "esp_netif.h" // Agregamos esta para esp_netif_init
 #include "esp_event.h" // Agregamos esta para el event_loop
 #include "esp_err.h"
-
+#include "lwip/sys.h"
 
 MiAntena::MiAntena(){
     expedienteReceptor = {};
@@ -22,9 +22,13 @@ void MiAntena::begin(){
     ESP_ERROR_CHECK(nvs_flash_init()); //Almacenamiento no Volatil, pedacito de la memoria flash, abrimos la lectura de NVS
     ESP_ERROR_CHECK(esp_netif_init()); //Network Interface, sabe manejar direcciones IP, esp no necesita ip ni routers pero esp32 obliga que este despierto antes de encer cualquier antena
     ESP_ERROR_CHECK(esp_event_loop_create_default()); //Tablero de notificaciones, hace que el circuito fisico avise al programa principal si algo se conecto o le llego algun paquete
+
+    esp_netif_create_default_wifi_sta();
+
     // #2
     wifi_init_config_t configuracionWIFI = WIFI_INIT_CONFIG_DEFAULT(); //Cargamos la configuracion de fabrica
     ESP_ERROR_CHECK(esp_wifi_init(&configuracionWIFI)); //Le pasamos la configuracion al driver del WI-FI
+
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)); // Le decimos que funcione como "Estacion" (Celular buscando Red)
 
 }
@@ -41,6 +45,15 @@ void MiAntena::encenderWiFi(bool apagarEspnow){
         printf("ESP_NOW ENCENDIDO!\n");
     }
     printf("Antena WiFi Encendia!\n");
+}
+
+void MiAntena::conectarWiFi() {
+    wifi_config_t wifi_config = {};
+    strncpy((char*)wifi_config.sta.ssid, CONFIG_WIFI_SSID, sizeof(wifi_config.sta.ssid));
+    strncpy((char*)wifi_config.sta.password, CONFIG_WIFI_PASSWORD, sizeof(wifi_config.sta.password));
+
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_start());
 }
 
 void MiAntena::agregarMacAddress(const uint8_t* nuevaMac){

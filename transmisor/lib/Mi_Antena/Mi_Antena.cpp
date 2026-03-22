@@ -1,4 +1,4 @@
-#include "mi_antena.h"
+#include "Mi_Antena.h"
 
 #include <stdio.h>
 #include <string.h> // Para memcpy en el paso #3 de añadir usuario/amigo para recibir nuestros datos
@@ -10,21 +10,25 @@
 #include "esp_netif.h" // Agregamos esta para esp_netif_init
 #include "esp_event.h" // Agregamos esta para el event_loop
 #include "esp_err.h"
-
+#include "lwip/sys.h"
 
 MiAntena::MiAntena(){
     expedienteReceptor = {};
 }
-    
-    
+
+
 void MiAntena::begin(){
     // #1
     ESP_ERROR_CHECK(nvs_flash_init()); //Almacenamiento no Volatil, pedacito de la memoria flash, abrimos la lectura de NVS
     ESP_ERROR_CHECK(esp_netif_init()); //Network Interface, sabe manejar direcciones IP, esp no necesita ip ni routers pero esp32 obliga que este despierto antes de encer cualquier antena
     ESP_ERROR_CHECK(esp_event_loop_create_default()); //Tablero de notificaciones, hace que el circuito fisico avise al programa principal si algo se conecto o le llego algun paquete
+
+    esp_netif_create_default_wifi_sta();
+
     // #2
-    wifi_init_config_t configuracionWIFI = WIFI_INIT_CONFIG_DEFAULT(); //Cargamos la configuracion de fabrica  
+    wifi_init_config_t configuracionWIFI = WIFI_INIT_CONFIG_DEFAULT(); //Cargamos la configuracion de fabrica
     ESP_ERROR_CHECK(esp_wifi_init(&configuracionWIFI)); //Le pasamos la configuracion al driver del WI-FI
+
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)); // Le decimos que funcione como "Estacion" (Celular buscando Red)
 
 }
@@ -37,10 +41,19 @@ void MiAntena::encenderWiFi(bool apagarEspnow){
     // #3
     if (apagarEspnow)
     {
-        ESP_ERROR_CHECK(esp_now_init()); //Iniciamos ESP-NOW 
+        ESP_ERROR_CHECK(esp_now_init()); //Iniciamos ESP-NOW
         printf("ESP_NOW ENCENDIDO!\n");
     }
     printf("Antena WiFi Encendia!\n");
+}
+
+void MiAntena::conectarWiFi() {
+    wifi_config_t wifi_config = {};
+    strncpy((char*)wifi_config.sta.ssid, CONFIG_WIFI_SSID, sizeof(wifi_config.sta.ssid));
+    strncpy((char*)wifi_config.sta.password, CONFIG_WIFI_PASSWORD, sizeof(wifi_config.sta.password));
+
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_start());
 }
 
 void MiAntena::agregarMacAddress(const uint8_t* nuevaMac){
@@ -48,9 +61,9 @@ void MiAntena::agregarMacAddress(const uint8_t* nuevaMac){
     printf("Direccion Mac Address: %02X, %02x, %02X, %02X, %02X, %02X\n", macReceptor[0], macReceptor[1], macReceptor[2], macReceptor[3], macReceptor[4], macReceptor[5]);
 }
 
-void MiAntena::expediente(){ 
+void MiAntena::expediente(){
     // Estamos configurando el expediente para identificar quien es amigo
-    
+
     //esp_now_peer_info_t expediente_ferrari = {}; // Creamos un expediente en blanco para nuestro amigo (peer to peer)
     memcpy(expedienteReceptor.peer_addr, macReceptor, 6); // Le copiamos la MAC Address que guardamos arriba en las globales, en C y C++ no podemos usar "=", no se puede copiar/igualar arreglos como si fueran variables
     // memcpy(Desitno donde va a pegar los datos, Origen de donde vas a copiar los datos, Cantidad,los bytes que va a copiar, 6 por ser MAC ADDRESS)
@@ -60,7 +73,7 @@ void MiAntena::expediente(){
 
     esp_now_add_peer(&expedienteReceptor); //Le agregamos la libreta de contactos oficial del chip
 }
-    
+
 
 void MiAntena::empaquetar(Datos* paqueteListo){
      esp_err_t resultado = esp_now_send(macReceptor, (uint8_t *) paqueteListo, sizeof(Datos));
@@ -71,14 +84,14 @@ void MiAntena::empaquetar(Datos* paqueteListo){
             printf("El paquete fue enviado con exito!\n");
         else
             printf("Error al enviar el paquete... D:\n");
-}   
+}
 
 void MiAntena::apagarWiFi(){
     // 1. Primero destruimos la sesión de ESP-NOW de forma segura
-    ESP_ERROR_CHECK(esp_now_deinit()); 
+    ESP_ERROR_CHECK(esp_now_deinit());
     printf("ESP_NOW APAGADO. (Ahorro de Energia)\n");
 
     // 2. Apagamos físicamente el radio Wi-Fi del ESP32
-    ESP_ERROR_CHECK(esp_wifi_stop()); 
+    ESP_ERROR_CHECK(esp_wifi_stop());
     printf("Antena Wi-Fi APAGADA. (Ahorro de Energia)\n");
 }

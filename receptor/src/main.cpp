@@ -12,9 +12,11 @@
 #include "LEDRGB.h"
 #include "Datos.h"
 #include "Mi_Antena.h"
+#include "Mqtt.h"
 
 LedRGB luces;
 MiAntena now;
+Mqtt mqtt;
 
 uint8_t mac[6];
 
@@ -34,6 +36,7 @@ extern "C" void app_main(void){
 
     now.begin();
     now.encenderWiFi(true);
+	//mqtt.begin();
 
     esp_read_mac(mac, ESP_MAC_WIFI_STA);
     printf("Mac Address: %02X, %02X, %02X, %02X, %02X, %02X\n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
@@ -89,7 +92,10 @@ void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_e
         memcpy(&mensajeDatos, datos_entrantes, sizeof(Datos));
 
         printf("\nPaquete Recibido\n");
-        printf("Orden recibida -> X: %d, Y: %d, Encendido: %d, Vel: %d, R: %d, G: %d, B: %d\n", mensajeDatos.x, mensajeDatos.y, mensajeDatos.encender, mensajeDatos.vel, mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul);
+        printf("Orden recibida -> X: %d, Y: %d, Encendido: %d, Vel: %d, R: %d, G: %d, B: %d, Cont: %d, Modo: %d, B1: %d, B2: %d\n",
+               mensajeDatos.x, mensajeDatos.y, mensajeDatos.encender, mensajeDatos.vel,
+               mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul,
+               mensajeDatos.continuar, mensajeDatos.modo, mensajeDatos.boton1, mensajeDatos.boton2);
 
         nueva_configuracion_colores = true;
     }

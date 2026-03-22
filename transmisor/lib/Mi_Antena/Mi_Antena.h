@@ -9,8 +9,8 @@ class  MiAntena{
     private:
         uint8_t macReceptor[6];
         esp_now_peer_info_t expedienteReceptor;
-    
-    
+
+
     public:
         MiAntena();
 
@@ -20,6 +20,7 @@ class  MiAntena{
         void expediente();
         void empaquetar(Datos* paquete);
         void apagarWiFi();
+		void conectarWiFi();
 };
 
 #endif

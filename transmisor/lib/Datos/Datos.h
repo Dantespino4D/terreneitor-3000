@@ -14,7 +14,7 @@
    		uint8_t azul;
 		uint8_t continuar;
 		uint8_t modo;
-		uint8_t b1;
-		uint8_t b2;
+		uint8_t boton1;
+		uint8_t boton2;
 	}__attribute__((packed));
 #endif

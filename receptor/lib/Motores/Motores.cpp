@@ -39,6 +39,8 @@ void Motores::begin(){
     ledc_timer.freq_hz          = 5000;                // 5 kHz (Frecuencia excelente para motores DC)
     ledc_timer.clk_cfg          = LEDC_AUTO_CLK;       // Reloj automático
 
+	ledc_timer_config(&ledc_timer);
+
     // Configuramos el Canal A (Velocidad Llanta Izquierda)
     ledc_channel_config_t ledc_channel_a = {};
     ledc_channel_a.speed_mode     = LEDC_LOW_SPEED_MODE;
@@ -181,17 +183,18 @@ void Motores::universal(int16_t x, int16_t y){
 }
 
 void Motores::velocidad(int16_t x, int16_t y){
+	y = y - 2048;
 	x = x - 2048;
-	y = abs(y - 2048);
+	uint8_t dif = abs(x);
 
-	if(y < 0){
-		velocidad1 = x - y;
-		velocidad2 = x ;
+	if(x < 0){
+		velocidad1 = y - dif;
+		velocidad2 = y ;
 	}else{
-		velocidad1 = x;
-		velocidad2 = x - y;
+		velocidad1 = y;
+		velocidad2= y - dif;
 	}
-	if(velocidad1 = 0){
+	if(velocidad1 == 0){
 		direccion1a = 0;
 		direccion2a = 0;
 	}else if(velocidad1 > 0){
@@ -201,10 +204,10 @@ void Motores::velocidad(int16_t x, int16_t y){
 		direccion1a = 0;
 		direccion2a = 1;
 	}
-	if(velocidad2 = 0){
+	if(velocidad2 == 0){
 		direccion1b = 0;
 		direccion2b = 0;
-	}else if(velocidad1 > 0){
+	}else if(velocidad2 > 0){
 		direccion1b = 1;
 		direccion2b = 0;
 	}else{
