@@ -38,6 +38,8 @@ void Motores::begin(){
     ledc_timer.freq_hz          = 5000;                // 5 kHz (Frecuencia excelente para motores DC)
     ledc_timer.clk_cfg          = LEDC_AUTO_CLK;       // Reloj automático
 
+    ledc_timer_config(&ledc_timer);
+
     // Configuramos el Canal A (Velocidad Llanta Izquierda)
     ledc_channel_config_t ledc_channel_a = {};
     ledc_channel_a.speed_mode     = LEDC_LOW_SPEED_MODE;
@@ -164,4 +166,73 @@ void Motores::puntoMuerto() {
     
     ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, 0);
     ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1);
+}
+
+void Motores::universal(int16_t x, int16_t y){
+	velocidad(x, y);
+	gpio_set_level(pin_ain1, direccion1a);
+	gpio_set_level(pin_ain2, direccion2a);
+	gpio_set_level(pin_bin1, direccion1b);
+	gpio_set_level(pin_bin2, direccion2b);
+
+    // IMPRIMIR LO QUE VA AL PWM PARA VERLO EN PANTALLA
+    printf("Intentando enviar PWM -> Motor Izq: %d\n | Motor Der: %d\n", abs(velocidad1), abs(velocidad2));
+
+	ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, abs(velocidad1));
+	ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
+	ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, abs(velocidad2));
+	ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1);
+}
+
+void Motores::velocidad(int16_t x_raw, int16_t y_raw){
+    long x_center = 0;
+    long y_center = 0;
+
+    // 1. ZONA MUERTA (Usando tus datos de centro 1800-1900)
+    // Si está entre 1750 y 1950, asumimos CERO perfecto.
+    if (x_raw > 1950) x_center = x_raw - 1950;
+    else if (x_raw < 1750) x_center = x_raw - 1750;
+
+    if (y_raw > 1950) y_center = y_raw - 1950;
+    else if (y_raw < 1750) y_center = y_raw - 1750;
+
+    // 2. MEZCLA ARCADE ESTÁNDAR
+    long vel_izq_cruda = y_center + x_center;
+    long vel_der_cruda = y_center - x_center;
+
+    // 3. ESCALADO A PWM 11 bits (Capacidad max: 0 a 2047)
+    // El rango restante max del joystick es ~2145 (4095 - 1950).
+    // Usamos int16_t/long velocidad1 para cálculos intermedios.
+    // Multiplicamos por la resolución del timer (2047) y dividimos entre el max joystick (2145).
+    long vel_izq_final = (vel_izq_cruda * 2047) / 2145;
+    long vel_der_final = (vel_der_cruda * 2047) / 2145;
+
+    // 4. TOPES DE SEGURIDAD (No desbordar el timer)
+    if(vel_izq_final > 2047) vel_izq_final = 2047;
+    if(vel_izq_final < -2047) vel_izq_final = -2047;
+    if(vel_der_final > 2047) vel_der_final = 2047;
+    if(vel_der_final < -2047) vel_der_final = -2047;
+
+    // Guardamos los valores absolutos para el PWM de 11 bits.
+    // ¡Asegúrate de que velocidad1 y velocidad2 en Motores.h sean int16_t o long!
+    velocidad1 = vel_izq_final; 
+    velocidad2 = vel_der_final;
+
+    // 5. ASIGNAR DIRECCIONES - Motor Izquierdo (Canal A)
+    if(velocidad1 == 0){
+        direccion1a = 0; direccion2a = 0; // Freno/Libre
+    }else if(velocidad1 > 0){
+        direccion1a = 1; direccion2a = 0; // Adelante
+    }else{
+        direccion1a = 0; direccion2a = 1; // Atras
+    }
+
+    // 6. ASIGNAR DIRECCIONES - Motor Derecho (Canal B)
+    if(velocidad2 == 0){
+        direccion1b = 0; direccion2b = 0; // Freno/Libre
+    }else if(velocidad2 > 0){
+        direccion1b = 1; direccion2b = 0; // Adelante
+    }else{
+        direccion1b = 0; direccion2b = 1; // Atras
+    }
 }

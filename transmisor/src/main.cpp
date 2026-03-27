@@ -12,10 +12,13 @@
 //objeto que recopila las lecturas de los controles
 Controles controles(ADC1_CHANNEL_6, ADC1_CHANNEL_7);
 MiAntena paqueteEnviar;
+//Boton btnAdelante(GPIO_NUM_18); 
+//Boton btnAtras(GPIO_NUM_19);
 
 //estructura de datos
 Datos estructuraControl = {2048, 2048, 0, 0, 255, 255, 255};
-uint8_t mac[6] = {0x1C, 0xDB, 0xD4, 0x47, 0X01, 0xD4};
+//uint8_t mac[6] = {0x1C, 0xDB, 0xD4, 0x47, 0X01, 0xD4}; //ESP-S3 Alex
+//uint8_t mac[6] = {0xDC, 0xB4, 0xD9, 0x14, 0X60, 0x70}; //ESP-S3 DANTE
 
 //prototipo de la funcion de la tarea
 //objeto para inicializar
@@ -28,8 +31,12 @@ void enviar(void* pvParameters);//y empaquetar
 extern "C" void app_main() { //se inicializan pines y otras cosas de los controles 
 	controles.begin();
 	paqueteEnviar.begin(); 
+    paqueteEnviar.encenderWiFi(true);
 	paqueteEnviar.agregarMacAddress(mac);
 	paqueteEnviar.expediente(); 
+
+    //btnAdelante.begin();
+    //btnAtras.begin();
 
 	//se crea la tarea de enviar 
 	xTaskCreatePinnedToCore(enviar, "enviar", 2048, NULL, 1, NULL, 1); 
@@ -54,6 +61,20 @@ void enviar(void* pvParameters) {
 
 		//se llena el struct
 		controles.empaquetar(&estructuraControl);
+
+        // 4. INYECTAMOS LOS DATOS FALSOS DEL JOYSTICK
+        //estructuraControl.x = 1850; // Eje X siempre en el centro (sin girar)
+
+        /*if (btnAdelante.presionado()) {
+            estructuraControl.y = 0;    // Valor máximo hacia un lado
+        } 
+        else if (btnAtras.presionado()) {
+            estructuraControl.y = 4095; // Valor máximo hacia el otro
+        } 
+        else {
+            estructuraControl.y = 2048; // Si no hay nada presionado, se queda quieto
+        }
+        */
 
 		cambioX = (abs(estructuraControl.x - valoresAnteriores.x) > 50);
         cambioY = (abs(estructuraControl.y - valoresAnteriores.y) > 50);
