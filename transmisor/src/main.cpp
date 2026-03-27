@@ -8,7 +8,6 @@
 #include "Controles/Controles.h"
 #include "Datos.h"
 #include "mi_antena.h"
-//#include "Boton/Boton.h"
 
 //objeto que recopila las lecturas de los controles
 Controles controles(ADC1_CHANNEL_6, ADC1_CHANNEL_7);
@@ -18,8 +17,8 @@ MiAntena paqueteEnviar;
 
 //estructura de datos
 Datos estructuraControl = {2048, 2048, 0, 0, 255, 255, 255};
-//uint8_t mac[6] = {0x1C, 0xDB, 0xD4, 0x47, 0X01, 0xD4};
-uint8_t mac[6] = {0xDC, 0xB4, 0xD9, 0x14, 0X60, 0x70}; //ESP-S3 DANTE
+//uint8_t mac[6] = {0x1C, 0xDB, 0xD4, 0x47, 0X01, 0xD4}; //ESP-S3 Alex
+//uint8_t mac[6] = {0xDC, 0xB4, 0xD9, 0x14, 0X60, 0x70}; //ESP-S3 DANTE
 
 //prototipo de la funcion de la tarea
 //objeto para inicializar
