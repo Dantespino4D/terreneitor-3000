@@ -7,8 +7,10 @@
 #include "esp_event.h"
 #include "Controles/Controles.h"
 #include "Datos.h"
-#include "mi_antena.h"
+#include "Mi_Antena.h"
+#include "Mqtt.h"
 
+Mqtt mqtt;
 //objeto que recopila las lecturas de los controles
 Controles controles(ADC1_CHANNEL_6, ADC1_CHANNEL_7);
 MiAntena paqueteEnviar;
@@ -46,7 +48,7 @@ extern "C" void app_main() { //se inicializan pines y otras cosas de los control
 
 
 void enviar(void* pvParameters) {
-	Datos valoresAnteriores = {1, 1, 1, 1, 1, 1, 1};
+	Datos valoresAnteriores = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 	uint32_t ultimoMovimiento = 0;
 	const uint32_t TIEMPO_ESPERA_MS = 10000; // 10 segundos de inactividad para apagar
@@ -84,31 +86,34 @@ void enviar(void* pvParameters) {
         {   
             // Actualizamos el reloj porque nos acabamos de mover
             ultimoMovimiento = xTaskGetTickCount() * portTICK_PERIOD_MS;
-            
+
             // Si la antena estaba dormida, la despertamos
             if (!antenaPrendida) {
-                paqueteEnviar.encenderWiFi(true); // true = usar ESP-NOW
-                
+                now.encenderWiFi(true); // true = usar ESP-NOW
+
                 // Como bien dijiste, organizamos esto por separado:
-                paqueteEnviar.agregarMacAddress(mac);
-                paqueteEnviar.expediente();
-                
+                now.agregarMacAddress(mac);
+                now.expediente();
+
                 antenaPrendida = true;
             }
 
             // Enviamos y actualizamos estado
-            printf("Datos X: %d, Y: %d, encender: %d, vel: %d, R: %d, G: %d, B: %d\n", estructuraControl.x, estructuraControl.y, estructuraControl.encender, estructuraControl.vel, estructuraControl.rojo, estructuraControl.verde, estructuraControl.azul);
-            paqueteEnviar.empaquetar(&estructuraControl);
+            printf("Datos X: %d, Y: %d, encender: %d, vel: %d, R: %d, G: %d, B: %d, Cont: %d, Modo: %d, B1: %d, B2: %d\n",
+                   estructuraControl.x, estructuraControl.y, estructuraControl.encender, estructuraControl.vel,
+                   estructuraControl.rojo, estructuraControl.verde, estructuraControl.azul,
+                   estructuraControl.continuar, estructuraControl.modo, estructuraControl.boton1, estructuraControl.boton2);
+            now.empaquetar(&estructuraControl);
             valoresAnteriores = estructuraControl;
         }
 
         // 2. ¿LLEVAMOS MUCHO TIEMPO SIN MOVERNOS?
         uint32_t tiempoActual = xTaskGetTickCount() * portTICK_PERIOD_MS;
-        
-        if (antenaPrendida && ((tiempoActual - ultimoMovimiento) > TIEMPO_ESPERA_MS)) 
+
+        if (antenaPrendida && ((tiempoActual - ultimoMovimiento) > TIEMPO_ESPERA_MS))
 		{
             // Pasaron los 10 segundos sin actividad. ¡A dormir!
-            paqueteEnviar.apagarWiFi(); // true = apagar también ESP-NOW
+            now.apagarWiFi(); // true = apagar también ESP-NOW
             antenaPrendida = false;
         }
         vTaskDelay(20 / portTICK_PERIOD_MS);

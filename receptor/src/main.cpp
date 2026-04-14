@@ -11,7 +11,8 @@
 
 #include "LEDRGB.h"
 #include "Datos.h"
-#include "mi_antena.h"
+#include "Mi_Antena.h"
+#include "Mqtt.h"
 #include "Motores.h"
 
 #define PIN_STBY 4
@@ -22,6 +23,7 @@
 #define PIN_BIN2 16
 #define PIN_PWMB 17
 
+Mqtt mqtt;
 LedRGB luces;
 MiAntena now;
 Motores motor(PIN_STBY, PIN_AIN1, PIN_AIN2, PIN_PWMA, PIN_BIN1, PIN_BIN2, PIN_PWMB);
@@ -44,9 +46,10 @@ long mapear(long x, long in_min, long in_max, long out_min, long out_max);
 
 extern "C" void app_main(void){
     luces.begin();
-    
+
     now.begin();
     now.encenderWiFi(true);
+	//mqtt.begin();
 
     motor.begin();
 
@@ -130,7 +133,10 @@ void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_e
         memcpy(&mensajeDatos, datos_entrantes, sizeof(Datos));
 
         printf("\nPaquete Recibido\n");
-        printf("Orden recibida -> X: %d, Y: %d, Encendido: %d, Vel: %d, R: %d, G: %d, B: %d\n", mensajeDatos.x, mensajeDatos.y, mensajeDatos.encender, mensajeDatos.vel, mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul);
+        printf("Orden recibida -> X: %d, Y: %d, Encendido: %d, Vel: %d, R: %d, G: %d, B: %d, Cont: %d, Modo: %d, B1: %d, B2: %d\n",
+               mensajeDatos.x, mensajeDatos.y, mensajeDatos.encender, mensajeDatos.vel,
+               mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul,
+               mensajeDatos.continuar, mensajeDatos.modo, mensajeDatos.boton1, mensajeDatos.boton2);
 
         nueva_configuracion_colores = true;
     }

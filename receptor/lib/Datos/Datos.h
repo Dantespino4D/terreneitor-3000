@@ -1,6 +1,7 @@
 #ifndef DATOS_H
 #define DATOS_H
 
+#include <cstdint>
 #include <stdint.h>
 
 	struct Datos {
@@ -15,5 +16,5 @@
 		uint8_t modo;
 		uint8_t boton1;
 		uint8_t boton2;
-	}__attribute__((packed)); 
+	}__attribute__((packed));
 #endif

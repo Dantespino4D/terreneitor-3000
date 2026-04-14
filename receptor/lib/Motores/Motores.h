@@ -30,10 +30,10 @@ class Motores{
         void begin();
 
         // Acciones del carrito (piden una velocidad de 0 a 255)
-        void avanzar(uint8_t velocidad);
-        void retroceder(uint8_t velocidad);
-        void girarIzquierda(uint8_t velocidad);
-        void girarDerecha(uint8_t velocidad);
+        void avanzar(uint16_t velocidad);
+        void retroceder(uint16_t velocidad);
+        void girarIzquierda(uint16_t velocidad);
+        void girarDerecha(uint16_t velocidad);
         void frenar(); // Detiene el coche de golpe
         void puntoMuerto(); // Deja los motores al aire para que se vayan frenando solos
         void universal(int16_t x, int16_t y);
