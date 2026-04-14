@@ -17,7 +17,7 @@
 #define PIN_PWMB 17
 
 // ¡Nace el Ferrari! Le inyectamos los pines al constructor
-Motores miFerrari(PIN_STBY, PIN_AIN1, PIN_AIN2, PIN_PWMA, PIN_BIN1, PIN_BIN2, PIN_PWMB);
+Motores motor(PIN_STBY, PIN_AIN1, PIN_AIN2, PIN_PWMA, PIN_BIN1, PIN_BIN2, PIN_PWMB);
 
 // =========================================================
 // 2. ESTRUCTURA DE DATOS (Simulación de tu Radio)
@@ -49,7 +49,7 @@ extern "C" void app_main(void) {
     printf("Arrancando sistema del Ferrari...\n");
 
     // Inicializamos el hardware de los motores (AQUÍ despierta el ESP32)
-    miFerrari.begin();
+    motor.begin();
 
     // Damos valores iniciales seguros para evitar que arranque a lo loco
     datos_recibidos.eje_y = 1800;       // Centro absoluto (Zona muerta)
@@ -67,36 +67,36 @@ extern "C" void app_main(void) {
 
         // ... (Adentro del while)
         if (frenoDeMano) {
-            miFerrari.frenar();
+            motor.frenar();
         } 
         else {
             // 1. Prioridad 1: Acelerar o Retroceder (Eje Y)
             if (datos_recibidos.eje_y > 1900) {
                 int vel = mapear(datos_recibidos.eje_y, 1900, 5000, 0, 255);
                 if (vel > 255) vel = 255; 
-                miFerrari.avanzar(vel);
+                motor.avanzar(vel);
             } 
             else if (datos_recibidos.eje_y < 1700) {
                 int vel = mapear(datos_recibidos.eje_y, 1700, 0, 0, 255);
                 if (vel > 255) vel = 255;
-                miFerrari.retroceder(vel);
+                motor.retroceder(vel);
             } 
             // 2. Prioridad 2: Si no estamos acelerando, revisamos si queremos Girar (Eje X)
             else if (datos_recibidos.eje_x > 1900) {
                 // Girar a la DERECHA
                 int vel = mapear(datos_recibidos.eje_x, 1900, 5000, 0, 255);
                 if (vel > 255) vel = 255;
-                miFerrari.girarDerecha(vel);
+                motor.girarDerecha(vel);
             }
             else if (datos_recibidos.eje_x < 1700) {
                 // Girar a la IZQUIERDA
                 int vel = mapear(datos_recibidos.eje_x, 1700, 0, 0, 255);
                 if (vel > 255) vel = 255;
-                miFerrari.girarIzquierda(vel);
+                motor.girarIzquierda(vel);
             }
             // 3. Prioridad 3: Soltamos por completo el control
             else {
-                miFerrari.puntoMuerto();
+                motor.puntoMuerto();
             }
         }
         // ¡SÚPER IMPORTANTE! El respiro del microcontrolador
