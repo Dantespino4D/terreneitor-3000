@@ -22,19 +22,21 @@ private:
 
 	//pines de los botones
 	gpio_num_t pin_encender;
-	gpio_num_t pin_vel;
-	gpio_num_t pin_continuar;
-	gpio_num_t pin_modo;
-	gpio_num_t pin_boton1;
-	gpio_num_t pin_boton2;
+	gpio_num_t pin_cambiarVel;
+	gpio_num_t pin_mantenerVel;
+	gpio_num_t pin_clackson;
+	gpio_num_t pin_ventiladores;
+	gpio_num_t pin_boton0;
+	gpio_num_t pin_botonJoystick;
 
 	//estado de los botones
 	bool encender;
-	bool vel;
-	bool continuar;
-	bool modo;
-	bool boton1;
-	bool boton2;
+	bool cambiarVel;
+	bool mantenerVel;
+	bool clackson;
+	bool ventiladores;
+	bool boton0;
+	bool botonJoystick;
 
 	//metodo para actualizar las posiciones
     void pos();

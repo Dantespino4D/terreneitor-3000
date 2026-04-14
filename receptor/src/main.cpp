@@ -76,7 +76,7 @@ void movimiento(void* pvParameters){
             {
                 luces.encenderLed(mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul);
             }
-            else if ((mensajeDatos.x > 1000 && mensajeDatos.x < 2000) && (mensajeDatos.y < 2000 && mensajeDatos.y > 1000))
+            else if ((estructuraControl.x > 1000 && mensajeDatos.x < 2000) && (estructuraControl.y < 2000 && mensajeDatos.y > 1000))
             {
                 luces.encenderLed(0, 0, 0);
             }
@@ -92,10 +92,10 @@ void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_e
         memcpy(&mensajeDatos, datos_entrantes, sizeof(Datos));
 
         printf("\nPaquete Recibido\n");
-        printf("Orden recibida -> X: %d, Y: %d, Encendido: %d, Vel: %d, R: %d, G: %d, B: %d, Cont: %d, Modo: %d, B1: %d, B2: %d\n",
-               mensajeDatos.x, mensajeDatos.y, mensajeDatos.encender, mensajeDatos.vel,
-               mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul,
-               mensajeDatos.continuar, mensajeDatos.modo, mensajeDatos.boton1, mensajeDatos.boton2);
+       	printf("R: %d, G: %d, B: %d Datos X: %d, Datos Y: %d, encender: %d, cambioVel: %d, mantenerVel: %d, clackson: %d, ventiladores: %d, boton0: %d, botonJoystick: %d\n",
+                    mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul, mensajeDatos.x, mensajeDatos.y, mensajeDatos.encender,
+                    mensajeDatos.cambioVel, mensajeDatos.mantenerVel, mensajeDatos.clackson, mensajeDatos.ventiladores, mensajeDatos.boton0,
+                    mensajeDatos.botonJoystick);
 
         nueva_configuracion_colores = true;
     }

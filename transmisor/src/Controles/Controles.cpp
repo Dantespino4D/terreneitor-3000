@@ -7,17 +7,19 @@ Controles::Controles(adc1_channel_t chX, adc1_channel_t chY) :
     x(2048),
 	y(2048),
 	pin_encender(GPIO_NUM_13), //PIN PROHIBIDOS: TX Y RX, D5, D4, D12, D15 (GPIO_NUM_3 Y GPIO_NUM_1 equivalen a RX0 y TX0, estos ahogan el monitor serial)
-	pin_vel(GPIO_NUM_14),
-	pin_continuar(GPIO_NUM_27),
-	pin_modo(GPIO_NUM_26),
-	pin_boton1(GPIO_NUM_25),
-	pin_boton2(GPIO_NUM_33),
-	encender(0),
-	vel(0),
-	continuar(false),
-	modo(false),
-	boton1(false),
-	boton2(false),
+	pin_cambiarVel(GPIO_NUM_14),
+	pin_mantenerVel(GPIO_NUM_27),
+	pin_clackson(GPIO_NUM_26),
+	pin_ventiladores(GPIO_NUM_25),
+	pin_boton0(GPIO_NUM_33),
+	pin_botonJoystick(GPIO_NUM_32), // Asignado pin por defecto para evitar errores
+	encender(false),
+	cambiarVel(false),
+	mantenerVel(false),
+	clackson(false),
+	ventiladores(false),
+	boton0(false),
+	botonJoystick(false),
 	channelX(chX),
 	channelY(chY)
 {}
@@ -30,7 +32,7 @@ void Controles::begin() {
 
 	//inicializacion de los pines de los botones
 	gpio_config_t conf;
-	conf.pin_bit_mask = (1ULL << pin_encender) | (1ULL << pin_vel) | (1ULL << pin_continuar) | (1ULL << pin_modo) | (1ULL << pin_boton1) | (1ULL << pin_boton2);
+	conf.pin_bit_mask = (1ULL << pin_encender) | (1ULL << pin_cambiarVel) | (1ULL << pin_mantenerVel) | (1ULL << pin_clackson) | (1ULL << pin_ventiladores) | (1ULL << pin_boton0) | (1ULL << pin_botonJoystick);
 	conf.mode = GPIO_MODE_INPUT;
 	conf.pull_up_en = GPIO_PULLUP_DISABLE;
 	conf.pull_down_en = GPIO_PULLDOWN_ENABLE;
@@ -66,35 +68,40 @@ void Controles::pos() {
 
 //actualizar el estado de los botones
 void Controles::botones(){
-	if((encender == 0) && (gpio_get_level(pin_encender) == 1)){
-		encender = 1;
-	}else if ((encender == 1) && (gpio_get_level(pin_encender) == 1)) {
-		encender = 0;
+	if((encender == false) && (gpio_get_level(pin_encender) == 1)){
+		encender = true;
+	}else if ((encender == true) && (gpio_get_level(pin_encender) == 1)) {
+		encender = false;
 	}
-	if((vel == 0) && (gpio_get_level(pin_vel) == 1)){
-		vel = 1;
-	}else if((vel == 1) && (gpio_get_level(pin_vel) == 1)){
-		vel = 0;
+	if((cambiarVel == false) && (gpio_get_level(pin_cambiarVel) == 1)){
+		cambiarVel = true;
+	}else if((cambiarVel == true) && (gpio_get_level(pin_cambiarVel) == 1)){
+		cambiarVel = false;
 	}
-	if(!continuar && (gpio_get_level(pin_continuar) == 1)){
-		continuar = true;
-	}else if(continuar && (gpio_get_level(pin_continuar) == 1)){
-		continuar = false;
+	if(!mantenerVel && (gpio_get_level(pin_mantenerVel) == 1)){
+		mantenerVel = true;
+	}else if(mantenerVel && (gpio_get_level(pin_mantenerVel) == 1)){
+		mantenerVel = false;
 	}
-	if(!modo && (gpio_get_level(pin_modo) == 1)){
-	modo = true;
-	}else if(modo && (gpio_get_level(pin_modo) == 1)){
-		modo = false;
+	if(!clackson && (gpio_get_level(pin_clackson) == 1)){
+	clackson = true;
+	}else if(clackson && (gpio_get_level(pin_clackson) == 1)){
+		clackson = false;
 	}
-	if(!boton1 && (gpio_get_level(pin_boton1) == 1)){
-		boton1 = true;
-	}else if(boton1 && (gpio_get_level(pin_boton1) == 1)){
-		boton1 = false;
+	if(!ventiladores && (gpio_get_level(pin_ventiladores) == 1)){
+		ventiladores = true;
+	}else if(ventiladores && (gpio_get_level(pin_ventiladores) == 1)){
+		ventiladores = false;
 	}
-	if(!boton2 && (gpio_get_level(pin_boton2) == 1)){
-		boton2 = true;
-	}else if(boton2 && (gpio_get_level(pin_boton2) == 1)){
-		boton2 = false;
+	if(!boton0 && (gpio_get_level(pin_boton0) == 1)){
+		boton0 = true;
+	}else if(boton0 && (gpio_get_level(pin_boton0) == 1)){
+		boton0 = false;
+	}
+	if(!botonJoystick && (gpio_get_level(pin_botonJoystick) == 1)){
+		botonJoystick = true;
+	}else if(botonJoystick && (gpio_get_level(pin_botonJoystick) == 1)){
+		botonJoystick = false;
 	}
 }
 
@@ -107,9 +114,10 @@ void Controles::empaquetar(Datos* datos) {
 	datos->x = x;
 	datos->y = y;
 	datos->encender = encender;
-	datos->vel = vel;
-	datos->continuar = continuar;
-	datos->modo = modo;
-	datos->boton1 = boton1;
-	datos->boton2 = boton2;
+	datos->cambioVel = cambiarVel;
+	datos->mantenerVel = mantenerVel;
+	datos->clackson = clackson;
+	datos->ventiladores = ventiladores;
+	datos->boton0 = boton0;
+	datos->botonJoystick = botonJoystick;
 }
