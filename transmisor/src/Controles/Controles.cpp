@@ -63,14 +63,14 @@ void Controles::pos() {
 //actualizar el estado de los botones
 void Controles::botones(){
 	if((encender == 0) && (gpio_get_level(pin_encender) == 1)){
-		encender = 1;
+		encender = true;
 	}else if ((encender == 1) && (gpio_get_level(pin_encender) == 1)) {
-		encender = 0;
+		encender = false;
 	}
 	if((vel == 0) && (gpio_get_level(pin_vel) == 1)){
-		vel = 1;
+		vel = true;
 	}else if((vel == 1) && (gpio_get_level(pin_vel) == 1)){
-		vel = 0;
+		vel = false;
 	}
 	/*
 	if(!continuar && (gpio_get_level(pin_continuar) == 1)){
@@ -95,7 +95,7 @@ void Controles::empaquetar(Datos* datos) {
 	datos->x = x;
 	datos->y = y;
 	datos->encender = encender;
-	datos->vel = vel;
+	datos->cambioVel = vel;
 	/*
 	datos->continuar = continuar;
 	datos->modo = modo;

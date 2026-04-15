@@ -16,7 +16,7 @@ MiAntena paqueteEnviar;
 //Boton btnAtras(GPIO_NUM_19);
 
 //estructura de datos
-Datos estructuraControl = {2048, 2048, 0, 0, 255, 255, 255};
+Datos estructuraControl = {255, 255, 255, 2048, 2048, false, false, false, false, false, false, false};
 uint8_t mac[6] = {0x1C, 0xDB, 0xD4, 0x47, 0X09, 0x88}; //ESP-S3 Alex
 //uint8_t mac[6] = {0xDC, 0xB4, 0xD9, 0x14, 0X60, 0x70}; //ESP-S3 DANTE
 
@@ -46,7 +46,7 @@ extern "C" void app_main() { //se inicializan pines y otras cosas de los control
 
 
 void enviar(void* pvParameters) {
-	Datos valoresAnteriores = {1, 1, 1, 1, 1, 1, 1};
+	Datos valoresAnteriores = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 	uint32_t ultimoMovimiento = 0;
 	const uint32_t TIEMPO_ESPERA_MS = 10000; // 10 segundos de inactividad para apagar
@@ -78,7 +78,7 @@ void enviar(void* pvParameters) {
 
 		cambioX = (abs(estructuraControl.x - valoresAnteriores.x) > 50);
         cambioY = (abs(estructuraControl.y - valoresAnteriores.y) > 50);
-		cambioBotones = (estructuraControl.encender != valoresAnteriores.encender) || (estructuraControl.vel != valoresAnteriores.vel);
+		cambioBotones = (estructuraControl.encender != valoresAnteriores.encender) || (estructuraControl.cambioVel != valoresAnteriores.cambioVel);
 
 		if (cambioX || cambioY || cambioBotones)
         {   
@@ -97,7 +97,11 @@ void enviar(void* pvParameters) {
             }
 
             // Enviamos y actualizamos estado
-            printf("Datos X: %d, Y: %d, encender: %d, vel: %d, R: %d, G: %d, B: %d\n", estructuraControl.x, estructuraControl.y, estructuraControl.encender, estructuraControl.vel, estructuraControl.rojo, estructuraControl.verde, estructuraControl.azul);
+            printf("R: %d, G: %d, B: %d Datos X: %d, Datos Y: %d, encender: %d, cambioVel: %d, mantenerVel: %d, clackson: %d, ventiladores: %d, boton0: %d, botonJoystick: %d\n", 
+                    estructuraControl.rojo, estructuraControl.verde, estructuraControl.azul, estructuraControl.x, estructuraControl.y, estructuraControl.encender, 
+                    estructuraControl.cambioVel, estructuraControl.mantenerVel, estructuraControl.clackson, estructuraControl.ventiladores, estructuraControl.boton0, 
+                    estructuraControl.botonJoystick);
+            
             paqueteEnviar.empaquetar(&estructuraControl);
             valoresAnteriores = estructuraControl;
         }
