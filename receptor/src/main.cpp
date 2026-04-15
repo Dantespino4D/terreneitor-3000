@@ -114,6 +114,7 @@ void movimiento(void* pvParameters){
                 }
                 // 3. Prioridad 3: Soltamos por completo el control
                 else {
+                    luces.apagarLed();
                     motor.puntoMuerto();
                 }
             }

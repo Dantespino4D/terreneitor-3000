@@ -17,7 +17,7 @@ MiAntena paqueteEnviar;
 
 //estructura de datos
 Datos estructuraControl = {2048, 2048, 0, 0, 255, 255, 255};
-//uint8_t mac[6] = {0x1C, 0xDB, 0xD4, 0x47, 0X01, 0xD4}; //ESP-S3 Alex
+uint8_t mac[6] = {0x1C, 0xDB, 0xD4, 0x47, 0X09, 0x88}; //ESP-S3 Alex
 //uint8_t mac[6] = {0xDC, 0xB4, 0xD9, 0x14, 0X60, 0x70}; //ESP-S3 DANTE
 
 //prototipo de la funcion de la tarea
@@ -80,7 +80,7 @@ void enviar(void* pvParameters) {
         cambioY = (abs(estructuraControl.y - valoresAnteriores.y) > 50);
 		cambioBotones = (estructuraControl.encender != valoresAnteriores.encender) || (estructuraControl.vel != valoresAnteriores.vel);
 
-		if (cambioX || cambioY || cambioBotones) 
+		if (cambioX || cambioY || cambioBotones)
         {   
             // Actualizamos el reloj porque nos acabamos de mover
             ultimoMovimiento = xTaskGetTickCount() * portTICK_PERIOD_MS;
