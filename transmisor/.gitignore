@@ -1,5 +1,5 @@
 .pio
 .vscode/
 managed_components/
-sdkconfig*
 src/Boton/
+sdkconfig*
