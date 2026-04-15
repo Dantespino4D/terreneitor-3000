@@ -68,11 +68,9 @@ void movimiento(void* pvParameters){
 
 		if(nueva_configuracion_colores == true)
         {
-
-            printf("LED actualizado a R:%d G:%d B:%d\n", mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul);
             nueva_configuracion_colores = false;
 
-            //bool frenoDeMano = (mensajeDatos.boton_joystick == 0);
+            //bool frenoDeMano = (mensajeDatos.botonJoystick == 0);
             bool frenoDeMano = false;
 
             // ... (Adentro del while)
@@ -112,17 +110,42 @@ void movimiento(void* pvParameters){
                     printf("Velocidad: %d", vel);
                     luces.encenderLed(mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul);
                 }
+
+                else if(mensajeDatos.encender){
+                    printf("encendido");
+                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                }
+                else if(mensajeDatos.cambioVel){
+                    printf("cambioVel");
+                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                }
+                else if(mensajeDatos.mantenerVel){
+                    printf("mantenerVel");
+                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                }
+                else if(mensajeDatos.clackson){
+                    printf("clackson");
+                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                }
+                else if(mensajeDatos.ventiladores){
+                    printf("ventiladores");
+                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                }
+                else if(mensajeDatos.boton0){
+                    printf("boton0");
+                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                }
+
                 // 3. Prioridad 3: Soltamos por completo el control
                 else {
                     luces.apagarLed();
                     motor.puntoMuerto();
                 }
             }
-           //motor.universal(mensajeDatos.x, mensajeDatos.y);
         }
-        vTaskDelay(20 / portTICK_PERIOD_MS);
-	}
+    }   vTaskDelay(20 / portTICK_PERIOD_MS);
 }
+
 
 
 void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_entrantes, int longitud){
@@ -136,7 +159,7 @@ void recibirDatos_espnow(const esp_now_recv_info_t *info, const uint8_t *datos_e
                     mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul, mensajeDatos.x, mensajeDatos.y, mensajeDatos.encender, 
                     mensajeDatos.cambioVel, mensajeDatos.mantenerVel, mensajeDatos.clackson, mensajeDatos.ventiladores, mensajeDatos.boton0, 
                     mensajeDatos.botonJoystick);
-                    
+
         nueva_configuracion_colores = true;
     }
     else

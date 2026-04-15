@@ -19,18 +19,25 @@ private:
 	//posision del joystick
     int x;
     int y;
-
+	
 	//pines de los botones
 	gpio_num_t pin_encender;
-	gpio_num_t pin_vel;
-	//int pin_continuar;
-	//int pin_modo;
+	gpio_num_t pin_cambiarVel;
+	gpio_num_t pin_mantenerVel;
+	gpio_num_t pin_clackson;
+	gpio_num_t pin_ventiladores;
+	gpio_num_t pin_boton0;
+	gpio_num_t pin_botonJoystick;
 
 	//estado de los botones
 	bool encender;
-	bool vel;
-	//bool continuar;
-	//bool modo;
+	bool cambiarVel;
+	bool mantenerVel;
+	bool clackson;
+	bool ventiladores;
+	bool boton0;
+	bool botonJoystick;
+
 
 	//metodo para actualizar las posiciones
     void pos();
