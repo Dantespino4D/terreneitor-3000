@@ -76,9 +76,12 @@ void enviar(void* pvParameters) {
         }
         */
 
-		cambioX = (abs(estructuraControl.x - valoresAnteriores.x) > 50);
-        cambioY = (abs(estructuraControl.y - valoresAnteriores.y) > 50);
-		cambioBotones = (estructuraControl.encender != valoresAnteriores.encender) || (estructuraControl.cambioVel != valoresAnteriores.cambioVel);
+		cambioX = (abs(estructuraControl.x - valoresAnteriores.x) > 300);
+        cambioY = (abs(estructuraControl.y - valoresAnteriores.y) > 300);
+		cambioBotones = (estructuraControl.encender != valoresAnteriores.encender) || (estructuraControl.cambioVel != valoresAnteriores.cambioVel)
+                        || (estructuraControl.mantenerVel != valoresAnteriores.mantenerVel) || (estructuraControl.clackson != valoresAnteriores.clackson)
+                        || (estructuraControl.ventiladores != valoresAnteriores.ventiladores) || (estructuraControl.boton0 != valoresAnteriores.boton0)
+                        || (estructuraControl.botonJoystick != valoresAnteriores.botonJoystick);
 
 		if (cambioX || cambioY || cambioBotones)
         {   

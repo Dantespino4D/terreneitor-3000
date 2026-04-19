@@ -37,7 +37,9 @@ private:
 	bool ventiladores;
 	bool boton0;
 	bool botonJoystick;
-
+	bool presionado;
+	uint64_t ultimoTiempo;
+	
 
 	//metodo para actualizar las posiciones
     void pos();

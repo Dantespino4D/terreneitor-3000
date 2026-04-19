@@ -112,28 +112,39 @@ void movimiento(void* pvParameters){
                 }
 
                 else if(mensajeDatos.encender){
+                    luces.apagarLed();
                     printf("encendido");
                     luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
                 }
                 else if(mensajeDatos.cambioVel){
+                    luces.apagarLed();
                     printf("cambioVel");
-                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                    luces.encenderLed(0, mensajeDatos.verde, mensajeDatos.azul);
                 }
                 else if(mensajeDatos.mantenerVel){
+                    luces.apagarLed();
                     printf("mantenerVel");
-                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                    luces.encenderLed(80, 0, mensajeDatos.azul);
                 }
                 else if(mensajeDatos.clackson){
+                    luces.apagarLed();
                     printf("clackson");
-                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                    luces.encenderLed(mensajeDatos.rojo, 80, 0);
                 }
                 else if(mensajeDatos.ventiladores){
+                    luces.apagarLed();
                     printf("ventiladores");
-                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                    luces.encenderLed(mensajeDatos.rojo, mensajeDatos.verde, 0);
                 }
                 else if(mensajeDatos.boton0){
+                    luces.apagarLed();
                     printf("boton0");
-                    luces.encenderLed(mensajeDatos.rojo, 0, mensajeDatos.azul);
+                    luces.encenderLed(0, mensajeDatos.verde, 0);
+                }
+                else if(mensajeDatos.botonJoystick){
+                    luces.apagarLed();
+                    printf("botonJoystick");
+                    luces.encenderLed(mensajeDatos.rojo, mensajeDatos.verde, mensajeDatos.azul);
                 }
 
                 // 3. Prioridad 3: Soltamos por completo el control
